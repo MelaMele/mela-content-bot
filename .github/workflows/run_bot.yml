@@ -1,0 +1,23 @@
+name: 24/7 Content Bot
+on:
+  schedule:
+    - cron: '0 * * * *' # በየሰዓቱ ራሱን ይቀሰቅሳል
+  workflow_dispatch: # በፈለግን ጊዜ በእጃችን ለማስነሳት
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: pip install yt-dlp telethon deep-translator
+      - name: Run bot
+        run: python main.py
+        env:
+          API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
