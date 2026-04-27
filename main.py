@@ -1,6 +1,3 @@
-# 1. ሁሉንም አስፈላጊ ላይብረሪዎች በአንድ ጊዜ መጫን
-!pip install yt-dlp telethon deep-translator
-
 # 2. ከዚያ በኋላ ዋናውን ስክሪፕት ማስጀመር
 import os
 import asyncio
