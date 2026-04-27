@@ -6,7 +6,7 @@ from telethon import TelegramClient
 from telethon.sessions import StringSession
 from deep_translator import GoogleTranslator
 
-# ኮንፊገሬሽን
+# ኮንፊገሬሽን ከ Secrets
 API_ID = os.environ.get('API_ID')
 API_HASH = os.environ.get('API_HASH')
 SESSION_STR = os.environ.get('SESSION_STRING')
@@ -49,7 +49,7 @@ async def main():
         print("🚀 ስራው በተሳካ ሁኔታ ተጠናቋል!")
         
     except Exception as e:
-        print("\n⚠️ ስህተት አጋጥሟል! ዝርዝሩ እነሆ፦")
+        print("\n⚠️ ዝርዝር የስህተት መልዕክት፦")
         print(traceback.format_exc())
 
 if __name__ == '__main__':
