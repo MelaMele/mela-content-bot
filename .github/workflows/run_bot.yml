@@ -1,58 +1,29 @@
-import os
-import asyncio
-import yt_dlp
-import traceback
-from telethon import TelegramClient
-from telethon.sessions import StringSession
-from deep_translator import GoogleTranslator
+name: 24/7 Content Bot
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
-# ኮንፊገሬሽን
-API_ID = os.environ.get('API_ID')
-API_HASH = os.environ.get('API_HASH')
-SESSION_STR = os.environ.get('SESSION_STRING')
-
-YOUTUBE_CH_URL = 'https://www.youtube.com/@LiveNOWfromFOX/videos' 
-TELEGRAM_CH_NAME = '@InfoMela06' 
-# ያንተን አዲሱን የሪፈራል ሊንክ እዚህ ጨምሬዋለሁ
-MY_AD_MESSAGE = "\n🚀 **ተጨማሪ ገቢ ማግኘት ይፈልጋሉ?**\nይህንን የጎግል ሉፕ ቦት ተጠቅመው ነፃ ተጠቃሚ ይሁኑ!\n👉 ሊንኩን ይጫኑ: https://t.me/GOOGLELOOPBOT?start=1065443252"
-
-def download_latest_video():
-    print("🎬 ቪዲዮ በመፈለግ ላይ...")
-    ydl_opts = {
-        'outtmpl': 'bot_video.mp4',
-        'format': 'mp4',
-        'playlist_items': '1', 
-        'max_filesize': 40000000,
-        'quiet': True,
-        'no_warnings': True
-    }
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        info = ydl.extract_info(YOUTUBE_CH_URL, download=True)
-        raw_title = info['entries'][0]['title']
-        translated = GoogleTranslator(source='auto', target='am').translate(raw_title)
-        return translated, 'bot_video.mp4'
-
-async def main():
-    if not API_ID or not SESSION_STR:
-        print("❌ ስህተት: Secrets (API_ID ወይም SESSION_STRING) በ GitHub ላይ አልተገኙም!")
-        return
-
-    try:
-        title, file_path = download_latest_video()
-        print(f"✅ ቪዲዮው ወርዷል: {title}")
-        
-        # ወደ ቴሌግራም ለመግባት ሙከራ
-        client = TelegramClient(StringSession(SESSION_STR), int(API_ID), API_HASH)
-        await client.start()
-        
-        print(f"📤 ወደ {TELEGRAM_CH_NAME} በመጫን ላይ...")
-        await client.send_file(TELEGRAM_CH_NAME, file_path, caption=f"🎬 **{title}**\n{MY_AD_MESSAGE}")
-        await client.disconnect()
-        print("🚀 ስራው በተሳካ ሁኔታ ተጠናቋል!")
-        
-    except Exception as e:
-        print("\n⚠️ የስህተቱ ዝርዝር መረጃ እነሆ፦")
-        print(traceback.format_exc())
-
-if __name__ == '__main__':
-    asyncio.run(main())
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install yt-dlp telethon deep-translator
+          
+      - name: Run bot
+        run: python main.py
+        env:
+          API_ID: ${{ secrets.TELEGRAM_API_ID }}
+          API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
+          SESSION_STRING: ${{ secrets.SESSION_STRING }}
